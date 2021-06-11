@@ -35,7 +35,7 @@ import { useState } from 'react';
 //   (sum, current) => sum + current, 0)
 // console.log(sum)
 
-const FormInput = () => {
+const FormInput = (props) => {
   const [todo, setTodo] = useState('')
 
   return(
@@ -44,13 +44,15 @@ const FormInput = () => {
       // console.log(e)
       // const todo = document.querySelector('#todo-input').value //use id to get value form input
       console.log('Submitted: ' + todo)
+      props.onTodoSubmit(todo) //callback func
+      setTodo('')
     }}>
       <input 
       id = "todo-input" 
       type = "text" 
       value = {todo} 
       onChange = {(e) => {
-        console.log('Changing: ' + e.currentTarget.value)
+        // console.log('Changing: ' + e.currentTarget.value)
         setTodo(e.currentTarget.value)
       }}/>
       <button type = "submit">+</button>
@@ -58,40 +60,42 @@ const FormInput = () => {
   )
 }
 
+const Todo = (props) => {
+  return (
+    <div style = {{display: 'flex'}}>
+      <li>{props.todo}</li>
+      <button onClick = {() => props.onCompleteClick({
+        todo: props.todo, 
+        date: props.date
+        })}>
+        {'\u2713'}
+      </button>
+    </div>
+    
+
+  )
+}
+
 
 function App() {
-  //Using const Input 
-  // return (
-  //   <form action = "/something">
-  //     <Input label = "Frist Name"  name = "fname"/>
-  //     <Input label = "Last Name"  name = "lname"/>
-  //     <Input label = "Email"  name = "email"/>
-  //     <input type = "submit" value = "Submit" />
-  //   </form>
-  // );
-  
-  //Count by Click Button
-  // const [count, setCount] = useState(0) //useState ต้องใช้ใน  React Function Component => App() 
-  // const onButtonClick = () => setCount(count + 1)
 
-//   return (
-//     <div className = "App">
-//       <h1>Counter</h1>
-//       <p>{count}</p>
-//       <button onClick = {onButtonClick} >Click here</button>
-//     </div>
-//   )
-// }
-
-  const [todos, setTodos] = useState(['test', 'foo'])
-
-  const todosElement = todos.map(todo => <p>{todo}</p>)
+  const [todos, setTodos] = useState([])
+  console.log(todos)
 
   return (
     <div>
       <h1>Todos</h1>
-      {todosElement}
-      <FormInput />
+      <ul>
+        {todos.map(todo => <Todo 
+          todo = {todo.title} 
+          date = {todo.date}
+          onCompleteClick = {(e) => setTodos(todos.filter(todo => todo.date !== e.date))}/>)}
+      </ul>
+      {/* เป็นการดึง array เก่า (todos) มาต่อด้วย array ใหม่ (todo) */}
+      <FormInput 
+        onTodoSubmit = {(todo) => setTodos([
+          ...todos, { date: Date.now(), title: todo }])
+        }/>
     </div>
 
   );
