@@ -35,7 +35,7 @@ import { useState } from 'react';
 //   (sum, current) => sum + current, 0)
 // console.log(sum)
 
-const FormInput = (props) => {
+const FormInput = ({onTodoSubmit}) => {
   const [todo, setTodo] = useState('')
 
   return(
@@ -44,7 +44,7 @@ const FormInput = (props) => {
       // console.log(e)
       // const todo = document.querySelector('#todo-input').value //use id to get value form input
       console.log('Submitted: ' + todo)
-      props.onTodoSubmit(todo) //callback func
+      onTodoSubmit(todo) //callback func
       setTodo('')
     }}>
       <input 
@@ -60,19 +60,31 @@ const FormInput = (props) => {
   )
 }
 
-const Todo = (props) => {
+// const Todo = (props) => {
+//   return (
+//     <div style = {{display: 'flex'}}>
+//       <li>{props.todo}</li>
+//       <button onClick = {() => props.onCompleteClick({
+//         todo: props.todo, 
+//         date: props.date
+//         })}>
+//         {'\u2713'}
+//       </button>
+//     </div>
+//   )
+// }
+// Deconstuct props
+const Todo = ({title, date, onCompleteClick}) => {
   return (
     <div style = {{display: 'flex'}}>
-      <li>{props.todo}</li>
-      <button onClick = {() => props.onCompleteClick({
-        todo: props.todo, 
-        date: props.date
+      <li>{title}</li>
+      <button onClick = {() => onCompleteClick({
+        title, 
+        date
         })}>
         {'\u2713'}
       </button>
     </div>
-    
-
   )
 }
 
@@ -87,14 +99,15 @@ function App() {
       <h1>Todos</h1>
       <ul>
         {todos.map(todo => <Todo 
-          todo = {todo.title} 
-          date = {todo.date}
+          // title = {todo.title} 
+          // date = {todo.date}
+          {...todo}
           onCompleteClick = {(e) => setTodos(todos.filter(todo => todo.date !== e.date))}/>)}
       </ul>
       {/* เป็นการดึง array เก่า (todos) มาต่อด้วย array ใหม่ (todo) */}
       <FormInput 
-        onTodoSubmit = {(todo) => setTodos([
-          ...todos, { date: Date.now(), title: todo }])
+        onTodoSubmit = {(todo) => setTodos(
+          [...todos, { date: Date.now(), title: todo }])
         }/>
     </div>
 
